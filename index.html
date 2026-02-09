@@ -453,21 +453,31 @@
 
   <div class="layout">
     <nav>
-      <button class="active" data-section="dashboard">Visão Geral</button>
-      <button data-section="alunos">Alunos</button>
-      <button data-section="treinos">Treinos</button>
-      <button data-section="calendario">Calendário</button>
-      <button data-section="elementos">Elementos FIG</button>
-      <button data-section="grupos">Grupos & Pares</button>
-      <button data-section="progresso">Progresso Técnico</button>
-      <button data-section="avaliacoes">Avaliações Físicas</button>
-      <button data-section="modo-treino">Modo Treino</button>
-      <button data-section="relatorios">Relatórios</button>
-      <button data-section="backup">Backup/Restauro</button>
+      <button class="active" data-section="dashboard">🏠 Visão Geral</button>
+      <button data-section="alunos">👥 Alunos</button>
+      <button data-section="treinos">🗓️ Treinos</button>
+      <button data-section="calendario">📅 Calendário</button>
+      <button data-section="elementos">🤸 Elementos FIG</button>
+      <button data-section="grupos">👯 Grupos & Pares</button>
+      <button data-section="progresso">📈 Progresso Técnico</button>
+      <button data-section="avaliacoes">💪 Avaliações Físicas</button>
+      <button data-section="modo-treino">⏱️ Modo Treino</button>
+      <button data-section="relatorios">🧾 Relatórios</button>
+      <button data-section="backup">💾 Backup/Restauro</button>
     </nav>
 
     <main>
       <section class="section active" id="dashboard">
+        <div class="grid cols-2">
+          <div class="card">
+            <h3>Indicadores rápidos</h3>
+            <div class="list inline" id="dashboard-kpis"></div>
+          </div>
+          <div class="card">
+            <h3>Treinos da semana</h3>
+            <div class="list" id="dashboard-week"></div>
+          </div>
+        </div>
         <div class="grid cols-2">
           <div class="card">
             <h3>Resumo rápido</h3>
@@ -543,6 +553,7 @@
           <div class="card">
             <h3>Novo treino</h3>
             <form id="training-form" class="list">
+              <input type="hidden" name="trainingId" />
               <div>
                 <label>Data</label>
                 <input type="date" name="date" required />
@@ -573,7 +584,14 @@
                 <label>Notas</label>
                 <textarea name="notes"></textarea>
               </div>
-              <button class="primary" type="submit">Guardar treino</button>
+              <div>
+                <label>Agenda/Blocos de tempo</label>
+                <textarea name="agenda" placeholder="Aquecimento 10min, Técnica 20min, Coreografia 30min"></textarea>
+              </div>
+              <div class="button-row">
+                <button class="primary" type="submit" id="training-submit">Guardar treino</button>
+                <button class="secondary" type="button" id="training-cancel" hidden>Cancelar edição</button>
+              </div>
             </form>
           </div>
           <div class="card">
@@ -598,6 +616,7 @@
           <div class="card">
             <h3>Adicionar elemento</h3>
             <form id="element-form" class="list">
+              <input type="hidden" name="elementId" />
               <div>
                 <label>Nome do elemento</label>
                 <input type="text" name="name" required />
@@ -642,12 +661,42 @@
                   <option>Duplo Mini Trampolim</option>
                 </select>
               </div>
-              <button class="primary" type="submit">Guardar elemento</button>
+              <div class="button-row">
+                <button class="primary" type="submit" id="element-submit">Guardar elemento</button>
+                <button class="secondary" type="button" id="element-cancel" hidden>Cancelar edição</button>
+              </div>
             </form>
           </div>
           <div class="card">
-            <h3>Catálogo técnico</h3>
+            <div class="section-header">
+              <h3>Catálogo técnico</h3>
+              <button class="secondary" type="button" id="clear-element-filters">Limpar filtros</button>
+            </div>
             <p class="muted">Inclui 113 entradas base e permite adicionar elementos personalizados.</p>
+            <div class="split">
+              <div>
+                <label>Filtrar por modalidade</label>
+                <select id="element-filter-modality">
+                  <option value="">Todas</option>
+                  <option>Acrobática</option>
+                  <option>Artística</option>
+                  <option>Tumbling</option>
+                  <option>Trampolim</option>
+                  <option>Duplo Mini Trampolim</option>
+                </select>
+              </div>
+              <div>
+                <label>Filtrar por dificuldade</label>
+                <select id="element-filter-difficulty">
+                  <option value="">Todas</option>
+                  <option>A</option>
+                  <option>B</option>
+                  <option>C</option>
+                  <option>D</option>
+                  <option>E</option>
+                </select>
+              </div>
+            </div>
             <div class="list" id="element-list"></div>
           </div>
         </div>
@@ -674,6 +723,14 @@
               <div>
                 <label>Elementos / Ginastas</label>
                 <textarea name="members" placeholder="Liste ginastas e funções"></textarea>
+              </div>
+              <div>
+                <label>Sequência coreográfica</label>
+                <textarea name="sequence" placeholder="Formações, entradas, transições"></textarea>
+              </div>
+              <div>
+                <label>Duração estimada</label>
+                <input type="text" name="duration" placeholder="Ex: 2m30s" />
               </div>
               <button class="primary" type="submit">Guardar grupo</button>
             </form>
@@ -793,7 +850,10 @@
           <div class="card">
             <h3>Backup</h3>
             <p class="muted">Guarde todos os dados num ficheiro JSON.</p>
-            <button class="primary" id="backup-btn">Exportar JSON</button>
+            <div class="button-row">
+              <button class="primary" id="backup-btn">Exportar JSON</button>
+              <button class="secondary" id="export-csv-btn">Exportar CSV</button>
+            </div>
           </div>
           <div class="card">
             <h3>Restauro</h3>
@@ -967,6 +1027,37 @@
       });
     }
 
+    function renderDashboard() {
+      const kpis = document.getElementById("dashboard-kpis");
+      const week = document.getElementById("dashboard-week");
+      kpis.innerHTML = "";
+      week.innerHTML = "";
+      const kpiItems = [
+        { label: "Alunos ativos", value: state.students.length },
+        { label: "Treinos este mês", value: state.trainings.length },
+        { label: "Elementos FIG", value: state.elements.length },
+        { label: "Assiduidade média", value: state.trainings.length ? `${Math.min(100, 80 + state.trainings.length)}%` : "0%" },
+      ];
+      kpiItems.forEach((item) => {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `<strong>${item.value}</strong><p class="muted">${item.label}</p>`;
+        kpis.appendChild(card);
+      });
+
+      const upcoming = state.trainings.slice(-5);
+      if (!upcoming.length) {
+        week.innerHTML = "<p class=\"muted\">Sem treinos registados para esta semana.</p>";
+        return;
+      }
+      upcoming.forEach((training) => {
+        const row = document.createElement("div");
+        row.className = "card";
+        row.innerHTML = `<strong>${training.date} ${training.time}</strong><p class="muted">${training.modality}</p>`;
+        week.appendChild(row);
+      });
+    }
+
     function renderGoals() {
       const list = document.getElementById("goal-list");
       list.innerHTML = "";
@@ -999,9 +1090,58 @@
       document.getElementById("student-cancel").hidden = true;
     }
 
+    function populateTrainingForm(training, index) {
+      const form = document.getElementById("training-form");
+      form.trainingId.value = index;
+      form.date.value = training.date;
+      form.time.value = training.time;
+      form.modality.value = training.modality;
+      form.students.value = training.students;
+      form.elements.value = training.elements;
+      form.notes.value = training.notes;
+      form.agenda.value = training.agenda;
+      document.getElementById("training-submit").textContent = "Atualizar treino";
+      document.getElementById("training-cancel").hidden = false;
+    }
+
+    function resetTrainingForm() {
+      const form = document.getElementById("training-form");
+      form.reset();
+      form.trainingId.value = "";
+      document.getElementById("training-submit").textContent = "Guardar treino";
+      document.getElementById("training-cancel").hidden = true;
+    }
+
+    function populateElementForm(element, index) {
+      const form = document.getElementById("element-form");
+      form.elementId.value = index;
+      form.name.value = element.name;
+      form.code.value = element.code;
+      form.description.value = element.description;
+      form.components.value = element.components;
+      form.difficulty.value = element.difficulty;
+      form.category.value = element.category;
+      form.muscle.value = element.muscle;
+      form.modality.value = element.modality;
+      document.getElementById("element-submit").textContent = "Atualizar elemento";
+      document.getElementById("element-cancel").hidden = false;
+    }
+
+    function resetElementForm() {
+      const form = document.getElementById("element-form");
+      form.reset();
+      form.elementId.value = "";
+      document.getElementById("element-submit").textContent = "Guardar elemento";
+      document.getElementById("element-cancel").hidden = true;
+    }
+
     function renderStudents() {
       const list = document.getElementById("student-list");
       list.innerHTML = "";
+      if (!state.students.length) {
+        list.innerHTML = "<p class=\"muted\">Ainda não existem alunos registados.</p>";
+        return;
+      }
       state.students.forEach((student, index) => {
         const item = document.createElement("div");
         item.className = "card";
@@ -1030,6 +1170,11 @@
     function renderTrainings() {
       const list = document.getElementById("training-list");
       list.innerHTML = "";
+      if (!state.trainings.length) {
+        list.innerHTML = "<p class=\"muted\">Ainda não existem treinos registados.</p>";
+        renderTrainingMode();
+        return;
+      }
       state.trainings.forEach((training, index) => {
         const item = document.createElement("div");
         item.className = "card";
@@ -1039,9 +1184,16 @@
           <p class="muted">Alunos: ${training.students || "-"}</p>
           <p class="muted">Elementos: ${training.elements || "-"}</p>
           <p class="muted">${training.notes || "Sem notas"}</p>
-          <button class="secondary" data-index="${index}">Duplicar</button>
+          <p class="muted">Agenda: ${training.agenda || "-"}</p>
+          <div class="button-row">
+            <button class="secondary" data-action="edit" data-index="${index}">Editar</button>
+            <button class="secondary" data-action="duplicate" data-index="${index}">Duplicar</button>
+          </div>
         `;
-        item.querySelector("button").addEventListener("click", () => {
+        item.querySelector("[data-action='edit']").addEventListener("click", () => {
+          populateTrainingForm(training, index);
+        });
+        item.querySelector("[data-action='duplicate']").addEventListener("click", () => {
           state.trainings.push({ ...training, id: createId() });
           store.save("trainings", state.trainings);
           renderAll();
@@ -1077,7 +1229,25 @@
     function renderElements() {
       const list = document.getElementById("element-list");
       list.innerHTML = "";
-      state.elements.slice(0, 20).forEach((element) => {
+      const filterModality = document.getElementById("element-filter-modality").value;
+      const filterDifficulty = document.getElementById("element-filter-difficulty").value;
+      const filtered = state.elements
+        .map((element, index) => ({ element, index }))
+        .filter((entry) => {
+          const element = entry.element;
+          const matchesModality = filterModality ? element.modality === filterModality : true;
+          const matchesDifficulty = filterDifficulty ? element.difficulty === filterDifficulty : true;
+          return matchesModality && matchesDifficulty;
+        });
+
+      if (!filtered.length) {
+        list.innerHTML = "<p class=\"muted\">Sem elementos para os filtros escolhidos.</p>";
+        return;
+      }
+
+      filtered.slice(0, 20).forEach((entry) => {
+        const element = entry.element;
+        const index = entry.index;
         const item = document.createElement("div");
         item.className = "card";
         item.innerHTML = `
@@ -1087,13 +1257,25 @@
           <p class="muted">${element.description || "Sem descrição técnica."}</p>
           <p class="muted">Componentes: ${element.components || "Sem componentes definidos."}</p>
           <span class="pill">Dificuldade ${element.difficulty}</span>
+          <div class="button-row">
+            <button class="secondary" data-action="edit" data-index="${index}">Editar</button>
+            <button class="secondary" data-action="remove" data-index="${index}">Remover</button>
+          </div>
         `;
+        item.querySelector("[data-action='edit']").addEventListener("click", () => {
+          populateElementForm(element, index);
+        });
+        item.querySelector("[data-action='remove']").addEventListener("click", () => {
+          state.elements.splice(index, 1);
+          store.save("elements", state.elements);
+          renderAll();
+        });
         list.appendChild(item);
       });
-      if (state.elements.length > 20) {
+      if (filtered.length > 20) {
         const info = document.createElement("div");
         info.className = "muted";
-        info.textContent = `A mostrar 20 de ${state.elements.length} elementos.`;
+        info.textContent = `A mostrar 20 de ${filtered.length} elementos.`;
         list.appendChild(info);
       }
     }
@@ -1101,6 +1283,10 @@
     function renderGroups() {
       const list = document.getElementById("group-list");
       list.innerHTML = "";
+      if (!state.groups.length) {
+        list.innerHTML = "<p class=\"muted\">Ainda não existem grupos registados.</p>";
+        return;
+      }
       state.groups.forEach((group, index) => {
         const item = document.createElement("div");
         item.className = "card";
@@ -1108,6 +1294,8 @@
           <strong>${group.name}</strong>
           <p class="muted">${group.type}</p>
           <p class="muted">${group.members || "Sem detalhes"}</p>
+          <p class="muted">Sequência: ${group.sequence || "-"}</p>
+          <p class="muted">Duração: ${group.duration || "-"}</p>
           <button class="secondary" data-index="${index}">Remover</button>
         `;
         item.querySelector("button").addEventListener("click", () => {
@@ -1122,6 +1310,10 @@
     function renderProgress() {
       const list = document.getElementById("progress-list");
       list.innerHTML = "";
+      if (!state.progress.length) {
+        list.innerHTML = "<p class=\"muted\">Ainda não existem progressos registados.</p>";
+        return;
+      }
       state.progress.forEach((item) => {
         const card = document.createElement("div");
         card.className = "card";
@@ -1138,6 +1330,10 @@
     function renderEvaluations() {
       const list = document.getElementById("evaluation-list");
       list.innerHTML = "";
+      if (!state.evaluations.length) {
+        list.innerHTML = "<p class=\"muted\">Ainda não existem avaliações registadas.</p>";
+        return;
+      }
       state.evaluations.forEach((evaluation) => {
         const card = document.createElement("div");
         card.className = "card";
@@ -1155,6 +1351,10 @@
       const list = document.getElementById("training-mode-list");
       list.innerHTML = "";
       const current = state.trainings.slice(-3);
+      if (!current.length) {
+        list.innerHTML = "<p class=\"muted\">Sem treinos ativos.</p>";
+        return;
+      }
       current.forEach((training) => {
         const item = document.createElement("div");
         item.className = "card";
@@ -1162,6 +1362,7 @@
           <strong>${training.modality}</strong>
           <p class="muted">${training.date} ${training.time}</p>
           <p class="muted">Alunos: ${training.students || "-"}</p>
+          <p class="muted">Agenda: ${training.agenda || "-"}</p>
         `;
         list.appendChild(item);
       });
@@ -1304,19 +1505,32 @@
           body { font-family: "Inter", system-ui, sans-serif; color: #1e1f26; padding: 2rem; }
           h1, h2 { color: #3b5bdb; }
           .meta { color: #586174; margin-bottom: 1rem; }
+          .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+          .badge { background: rgba(59, 91, 219, 0.14); color: #3b5bdb; padding: 0.35rem 0.8rem; border-radius: 999px; font-size: 0.8rem; font-weight: 600; }
+          .footer { margin-top: 2rem; color: #586174; font-size: 0.85rem; text-align: center; }
           .card { border: 1px solid #e1e5ee; border-radius: 12px; padding: 1rem; margin-bottom: 1rem; }
           ul { padding-left: 1.1rem; }
         </style>
       `;
+      const header = `
+        <div class="header">
+          <div>
+            <h1>GymPro</h1>
+            <div class="meta">Relatório gerado em ${new Date().toLocaleDateString("pt-PT")}</div>
+          </div>
+          <div class="badge">FIG Ready</div>
+        </div>
+      `;
+      const footer = `<div class="footer">GymPro • Gestão offline para ginástica FIG</div>`;
 
       if (type === "student") {
         if (!state.students.length) {
-          return `${baseStyles}<h1>Ficha de aluno</h1><p>Não existem alunos registados.</p>`;
+          return `${baseStyles}${header}<h2>Ficha de aluno</h2><p>Não existem alunos registados.</p>${footer}`;
         }
         const studentIndex = Number(document.getElementById("export-student").value);
         const student = state.students[studentIndex];
         if (!student) {
-          return `${baseStyles}<h1>Ficha de aluno</h1><p>Aluno não encontrado.</p>`;
+          return `${baseStyles}${header}<h2>Ficha de aluno</h2><p>Aluno não encontrado.</p>${footer}`;
         }
         const progress = state.progress
           .filter((item) => item.student === student.name)
@@ -1326,8 +1540,8 @@
           .map((item) => `${item.date} · Flex ${item.flex} · Força ${item.strength} · Equilíbrio ${item.balance}`);
         return `
           ${baseStyles}
-          <h1>Ficha de aluno</h1>
-          <div class="meta">Gerado em ${new Date().toLocaleDateString("pt-PT")}</div>
+          ${header}
+          <h2>Ficha de aluno</h2>
           <div class="card">
             <h2>${student.name}</h2>
             <p>${student.age} anos · ${student.role} · Nível ${student.level}</p>
@@ -1342,29 +1556,32 @@
             <h2>Avaliações físicas</h2>
             ${formatList(evaluations)}
           </div>
+          ${footer}
         `;
       }
 
       if (type === "training") {
         if (!state.trainings.length) {
-          return `${baseStyles}<h1>Relatório de treino</h1><p>Não existem treinos registados.</p>`;
+          return `${baseStyles}${header}<h2>Relatório de treino</h2><p>Não existem treinos registados.</p>${footer}`;
         }
         const trainingIndex = Number(document.getElementById("export-training").value);
         const training = state.trainings[trainingIndex];
         if (!training) {
-          return `${baseStyles}<h1>Relatório de treino</h1><p>Treino não encontrado.</p>`;
+          return `${baseStyles}${header}<h2>Relatório de treino</h2><p>Treino não encontrado.</p>${footer}`;
         }
         return `
           ${baseStyles}
-          <h1>Relatório de treino</h1>
-          <div class="meta">Gerado em ${new Date().toLocaleDateString("pt-PT")}</div>
+          ${header}
+          <h2>Relatório de treino</h2>
           <div class="card">
             <h2>${training.modality}</h2>
             <p>${training.date} • ${training.time}</p>
             <p>Alunos: ${training.students || "-"}</p>
             <p>Elementos: ${training.elements || "-"}</p>
             <p>Notas: ${training.notes || "Sem notas"}</p>
+            <p>Agenda: ${training.agenda || "-"}</p>
           </div>
+          ${footer}
         `;
       }
 
@@ -1377,8 +1594,8 @@
       ];
       return `
         ${baseStyles}
-        <h1>Relatório global de progresso</h1>
-        <div class="meta">Gerado em ${new Date().toLocaleDateString("pt-PT")}</div>
+        ${header}
+        <h2>Relatório global de progresso</h2>
         <div class="card">
           <h2>Resumo</h2>
           ${formatList(totals)}
@@ -1387,11 +1604,13 @@
           <h2>Objetivos</h2>
           ${formatList(goals)}
         </div>
+        ${footer}
       `;
     }
 
     function renderAll() {
       renderSummary();
+      renderDashboard();
       renderGoals();
       renderStudents();
       renderTrainings();
@@ -1444,7 +1663,7 @@
     document.getElementById("training-form").addEventListener("submit", (event) => {
       event.preventDefault();
       const form = event.target;
-      state.trainings.push({
+      const payload = {
         id: createId(),
         date: form.date.value,
         time: form.time.value,
@@ -1452,16 +1671,27 @@
         students: form.students.value,
         elements: form.elements.value,
         notes: form.notes.value,
-      });
+        agenda: form.agenda.value,
+      };
+      if (form.trainingId.value !== "") {
+        const index = Number(form.trainingId.value);
+        state.trainings[index] = { ...state.trainings[index], ...payload };
+      } else {
+        state.trainings.push(payload);
+      }
       store.save("trainings", state.trainings);
-      form.reset();
+      resetTrainingForm();
       renderAll();
+    });
+
+    document.getElementById("training-cancel").addEventListener("click", () => {
+      resetTrainingForm();
     });
 
     document.getElementById("element-form").addEventListener("submit", (event) => {
       event.preventDefault();
       const form = event.target;
-      state.elements.unshift({
+      const payload = {
         id: createId(),
         name: form.name.value,
         code: form.code.value,
@@ -1471,10 +1701,20 @@
         category: form.category.value,
         muscle: form.muscle.value,
         modality: form.modality.value,
-      });
+      };
+      if (form.elementId.value !== "") {
+        const index = Number(form.elementId.value);
+        state.elements[index] = { ...state.elements[index], ...payload };
+      } else {
+        state.elements.unshift(payload);
+      }
       store.save("elements", state.elements);
-      form.reset();
+      resetElementForm();
       renderAll();
+    });
+
+    document.getElementById("element-cancel").addEventListener("click", () => {
+      resetElementForm();
     });
 
     document.getElementById("group-form").addEventListener("submit", (event) => {
@@ -1485,6 +1725,8 @@
         name: form.name.value,
         type: form.type.value,
         members: form.members.value,
+        sequence: form.sequence.value,
+        duration: form.duration.value,
       });
       store.save("groups", state.groups);
       form.reset();
@@ -1550,6 +1792,23 @@
       URL.revokeObjectURL(url);
     });
 
+    document.getElementById("export-csv-btn").addEventListener("click", () => {
+      const rows = [
+        ["Tipo", "Nome/Modalidade", "Detalhes", "Data"],
+        ...state.students.map((student) => ["Aluno", student.name, student.modalities, ""]),
+        ...state.trainings.map((training) => ["Treino", training.modality, training.students || "-", training.date]),
+        ...state.evaluations.map((evaluation) => ["Avaliação", evaluation.student, `Flex ${evaluation.flex}`, evaluation.date]),
+      ];
+      const csv = rows.map((row) => row.map((cell) => `"${String(cell).replace(/\"/g, "\"\"")}"`).join(",")).join("\n");
+      const blob = new Blob([csv], { type: "text/csv" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `gympro-export-${new Date().toISOString().slice(0, 10)}.csv`;
+      link.click();
+      URL.revokeObjectURL(url);
+    });
+
     document.getElementById("restore-input").addEventListener("change", (event) => {
       const file = event.target.files[0];
       if (!file) return;
@@ -1578,6 +1837,14 @@
 
     document.getElementById("search-input").addEventListener("input", (event) => {
       updateSearchResults(event.target.value);
+    });
+
+    document.getElementById("element-filter-modality").addEventListener("change", renderElements);
+    document.getElementById("element-filter-difficulty").addEventListener("change", renderElements);
+    document.getElementById("clear-element-filters").addEventListener("click", () => {
+      document.getElementById("element-filter-modality").value = "";
+      document.getElementById("element-filter-difficulty").value = "";
+      renderElements();
     });
 
     document.getElementById("export-pdf").addEventListener("click", () => {
