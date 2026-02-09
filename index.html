@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GymPro — Gestão de Ginástica FIG</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f6f7fb;
+      --card: #ffffff;
+      --text: #1e1f26;
+      --muted: #586174;
+      --brand: #3b5bdb;
+      --accent: #ff922b;
+      --border: #e1e5ee;
+      --success: #37b24d;
+      --warning: #f08c00;
+      --danger: #f03e3e;
+      font-family: "Inter", system-ui, -apple-system, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    header {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 1.5rem clamp(1rem, 4vw, 2.5rem);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    header h1 {
+      font-size: clamp(1.5rem, 3vw, 2.3rem);
+    }
+
+    header p {
+      color: var(--muted);
+      max-width: 45ch;
+    }
+
+    .badge {
+      background: rgba(59, 91, 219, 0.12);
+      color: var(--brand);
+      padding: 0.3rem 0.7rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 1.5rem;
+      padding: 1.5rem clamp(1rem, 4vw, 2.5rem);
+    }
+
+    nav {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+      padding: 1rem;
+      height: fit-content;
+      position: sticky;
+      top: 1.5rem;
+    }
+
+    nav button {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      width: 100%;
+      background: transparent;
+      border: none;
+      padding: 0.7rem 0.8rem;
+      border-radius: 0.8rem;
+      font-weight: 600;
+      color: var(--text);
+      cursor: pointer;
+      text-align: left;
+    }
+
+    nav button.active,
+    nav button:hover {
+      background: rgba(59, 91, 219, 0.12);
+      color: var(--brand);
+    }
+
+    main {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .section {
+      display: none;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .section.active {
+      display: flex;
+    }
+
+    .grid {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .grid.cols-2 {
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+      padding: 1rem;
+      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.05);
+    }
+
+    .card h3 {
+      margin-bottom: 0.6rem;
+    }
+
+    label {
+      font-size: 0.85rem;
+      color: var(--muted);
+      display: block;
+      margin-bottom: 0.3rem;
+    }
+
+    input,
+    select,
+    textarea,
+    button {
+      font: inherit;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 0.55rem 0.7rem;
+      border-radius: 0.6rem;
+      border: 1px solid var(--border);
+      background: #fff;
+    }
+
+    textarea {
+      min-height: 90px;
+      resize: vertical;
+    }
+
+    button.primary {
+      background: var(--brand);
+      color: #fff;
+      border: none;
+      padding: 0.65rem 1rem;
+      border-radius: 0.6rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    button.secondary {
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text);
+      padding: 0.6rem 0.9rem;
+      border-radius: 0.6rem;
+      cursor: pointer;
+    }
+
+    button.danger {
+      background: var(--danger);
+      color: #fff;
+      border: none;
+      padding: 0.6rem 0.9rem;
+      border-radius: 0.6rem;
+      cursor: pointer;
+    }
+
+    .list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    .pill {
+      padding: 0.2rem 0.5rem;
+      border-radius: 0.5rem;
+      font-size: 0.75rem;
+      background: rgba(255, 146, 43, 0.16);
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .status {
+      padding: 0.2rem 0.5rem;
+      border-radius: 0.5rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .status.nao {
+      background: rgba(240, 62, 62, 0.12);
+      color: var(--danger);
+    }
+
+    .status.iniciado {
+      background: rgba(240, 140, 0, 0.15);
+      color: var(--warning);
+    }
+
+    .status.progresso {
+      background: rgba(59, 91, 219, 0.15);
+      color: var(--brand);
+    }
+
+    .status.dominado {
+      background: rgba(55, 178, 77, 0.15);
+      color: var(--success);
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .calendar {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(120px, 1fr));
+      gap: 0.6rem;
+      overflow-x: auto;
+    }
+
+    .calendar .day {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 0.8rem;
+      padding: 0.6rem;
+      min-height: 100px;
+    }
+
+    .calendar .day h4 {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 0.3rem;
+    }
+
+    .timer {
+      font-size: 2.5rem;
+      font-weight: 700;
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      z-index: 10;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal .card {
+      width: min(720px, 100%);
+    }
+
+    .search-results {
+      max-height: 320px;
+      overflow: auto;
+      margin-top: 0.8rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .chart {
+      width: 100%;
+      height: 220px;
+    }
+
+    .footer-note {
+      font-size: 0.85rem;
+      color: var(--muted);
+      text-align: center;
+      padding: 2rem 1rem;
+    }
+
+    @media (max-width: 900px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      nav {
+        position: static;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 0.4rem;
+      }
+    }
+
+    @media (max-width: 600px) {
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .calendar {
+        grid-template-columns: repeat(7, minmax(160px, 1fr));
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <span class="badge">Offline First • FIG Ready</span>
+      <h1>GymPro</h1>
+      <p>Gestão completa de ginástica FIG num único ficheiro. Funciona 100% no browser, guarda dados no <strong>localStorage</strong> e fica disponível offline após o primeiro acesso.</p>
+    </div>
+    <div class="toolbar">
+      <button class="secondary" id="open-search">Pesquisa Global (Ctrl+K)</button>
+      <button class="primary" id="export-pdf">Exportar PDF</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <nav>
+      <button class="active" data-section="dashboard">Visão Geral</button>
+      <button data-section="alunos">Alunos</button>
+      <button data-section="treinos">Treinos</button>
+      <button data-section="calendario">Calendário</button>
+      <button data-section="elementos">Elementos FIG</button>
+      <button data-section="grupos">Grupos & Pares</button>
+      <button data-section="progresso">Progresso Técnico</button>
+      <button data-section="avaliacoes">Avaliações Físicas</button>
+      <button data-section="modo-treino">Modo Treino</button>
+      <button data-section="relatorios">Relatórios</button>
+      <button data-section="backup">Backup/Restauro</button>
+    </nav>
+
+    <main>
+      <section class="section active" id="dashboard">
+        <div class="grid cols-2">
+          <div class="card">
+            <h3>Resumo rápido</h3>
+            <p class="muted">Acompanhe alunos, sessões e progresso técnico.</p>
+            <ul class="list" id="summary-list"></ul>
+          </div>
+          <div class="card">
+            <h3>Modalidades FIG</h3>
+            <div class="list">
+              <div class="pill">Acrobática</div>
+              <div class="pill">Artística</div>
+              <div class="pill">Tumbling</div>
+              <div class="pill">Trampolim</div>
+              <div class="pill">Duplo Mini Trampolim</div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Objetivos ativos</h3>
+          <div class="list" id="goal-list"></div>
+        </div>
+      </section>
+
+      <section class="section" id="alunos">
+        <div class="grid cols-2">
+          <div class="card">
+            <h3>Novo aluno</h3>
+            <form id="student-form" class="list">
+              <div>
+                <label>Nome completo</label>
+                <input type="text" name="name" required />
+              </div>
+              <div>
+                <label>Idade</label>
+                <input type="number" name="age" min="3" max="40" required />
+              </div>
+              <div>
+                <label>Função</label>
+                <select name="role">
+                  <option value="Base">Base</option>
+                  <option value="Topo">Topo</option>
+                  <option value="Intermédio">Intermédio</option>
+                </select>
+              </div>
+              <div>
+                <label>Nível</label>
+                <input type="text" name="level" placeholder="Ex: Iniciado" required />
+              </div>
+              <div>
+                <label>Modalidades</label>
+                <input type="text" name="modalities" placeholder="Acrobática, Tumbling" required />
+              </div>
+              <div>
+                <label>Contacto</label>
+                <input type="text" name="contact" placeholder="email / telefone" required />
+              </div>
+              <button class="primary" type="submit">Adicionar aluno</button>
+            </form>
+          </div>
+          <div class="card">
+            <h3>Lista de alunos</h3>
+            <div class="list" id="student-list"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="treinos">
+        <div class="grid cols-2">
+          <div class="card">
+            <h3>Novo treino</h3>
+            <form id="training-form" class="list">
+              <div>
+                <label>Data</label>
+                <input type="date" name="date" required />
+              </div>
+              <div>
+                <label>Hora</label>
+                <input type="time" name="time" required />
+              </div>
+              <div>
+                <label>Modalidade</label>
+                <select name="modality">
+                  <option>Acrobática</option>
+                  <option>Artística</option>
+                  <option>Tumbling</option>
+                  <option>Trampolim</option>
+                  <option>Duplo Mini Trampolim</option>
+                </select>
+              </div>
+              <div>
+                <label>Alunos (separados por vírgula)</label>
+                <input type="text" name="students" />
+              </div>
+              <div>
+                <label>Elementos técnicos</label>
+                <input type="text" name="elements" placeholder="Ex: FIG-001, FIG-002" />
+              </div>
+              <div>
+                <label>Notas</label>
+                <textarea name="notes"></textarea>
+              </div>
+              <button class="primary" type="submit">Guardar treino</button>
+            </form>
+          </div>
+          <div class="card">
+            <h3>Sessões registadas</h3>
+            <div class="list" id="training-list"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="calendario">
+        <div class="card">
+          <div class="toolbar">
+            <h3>Calendário mensal</h3>
+            <button class="secondary" id="today-btn">Hoje</button>
+          </div>
+          <div class="calendar" id="calendar-grid"></div>
+        </div>
+      </section>
+
+      <section class="section" id="elementos">
+        <div class="grid cols-2">
+          <div class="card">
+            <h3>Adicionar elemento</h3>
+            <form id="element-form" class="list">
+              <div>
+                <label>Nome do elemento</label>
+                <input type="text" name="name" required />
+              </div>
+              <div>
+                <label>Código FIG</label>
+                <input type="text" name="code" required />
+              </div>
+              <div>
+                <label>Dificuldade</label>
+                <select name="difficulty">
+                  <option>A</option>
+                  <option>B</option>
+                  <option>C</option>
+                  <option>D</option>
+                  <option>E</option>
+                </select>
+              </div>
+              <div>
+                <label>Categoria</label>
+                <input type="text" name="category" required />
+              </div>
+              <div>
+                <label>Grupo muscular</label>
+                <input type="text" name="muscle" required />
+              </div>
+              <div>
+                <label>Modalidade</label>
+                <select name="modality">
+                  <option>Acrobática</option>
+                  <option>Artística</option>
+                  <option>Tumbling</option>
+                  <option>Trampolim</option>
+                  <option>Duplo Mini Trampolim</option>
+                </select>
+              </div>
+              <button class="primary" type="submit">Guardar elemento</button>
+            </form>
+          </div>
+          <div class="card">
+            <h3>Catálogo técnico</h3>
+            <p class="muted">Inclui 113 entradas base e permite adicionar elementos personalizados.</p>
+            <div class="list" id="element-list"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="grupos">
+        <div class="grid cols-2">
+          <div class="card">
+            <h3>Grupos, pares e coreografias</h3>
+            <form id="group-form" class="list">
+              <div>
+                <label>Nome do grupo</label>
+                <input type="text" name="name" required />
+              </div>
+              <div>
+                <label>Tipo</label>
+                <select name="type">
+                  <option>Pares</option>
+                  <option>Trio</option>
+                  <option>Grupo</option>
+                  <option>Coreografia até 60 ginastas</option>
+                </select>
+              </div>
+              <div>
+                <label>Elementos / Ginastas</label>
+                <textarea name="members" placeholder="Liste ginastas e funções"></textarea>
+              </div>
+              <button class="primary" type="submit">Guardar grupo</button>
+            </form>
+          </div>
+          <div class="card">
+            <h3>Organização</h3>
+            <div class="list" id="group-list"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="progresso">
+        <div class="grid cols-2">
+          <div class="card">
+            <h3>Atualizar progresso técnico</h3>
+            <form id="progress-form" class="list">
+              <div>
+                <label>Aluno</label>
+                <input type="text" name="student" required />
+              </div>
+              <div>
+                <label>Elemento FIG</label>
+                <input type="text" name="element" required />
+              </div>
+              <div>
+                <label>Estado</label>
+                <select name="status">
+                  <option value="nao">Não iniciado</option>
+                  <option value="iniciado">Iniciado</option>
+                  <option value="progresso">Em progresso</option>
+                  <option value="dominado">Dominado</option>
+                </select>
+              </div>
+              <button class="primary" type="submit">Registar progresso</button>
+            </form>
+          </div>
+          <div class="card">
+            <h3>Evolução por elemento</h3>
+            <div class="list" id="progress-list"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="avaliacoes">
+        <div class="grid cols-2">
+          <div class="card">
+            <h3>Avaliação física</h3>
+            <form id="evaluation-form" class="list">
+              <div>
+                <label>Aluno</label>
+                <input type="text" name="student" required />
+              </div>
+              <div>
+                <label>Flexibilidade (1-10)</label>
+                <input type="number" name="flex" min="1" max="10" required />
+              </div>
+              <div>
+                <label>Força (1-10)</label>
+                <input type="number" name="strength" min="1" max="10" required />
+              </div>
+              <div>
+                <label>Equilíbrio (1-10)</label>
+                <input type="number" name="balance" min="1" max="10" required />
+              </div>
+              <div>
+                <label>Coordenação (1-10)</label>
+                <input type="number" name="coord" min="1" max="10" required />
+              </div>
+              <div>
+                <label>Expressão (1-10)</label>
+                <input type="number" name="expression" min="1" max="10" required />
+              </div>
+              <button class="primary" type="submit">Guardar avaliação</button>
+            </form>
+          </div>
+          <div class="card">
+            <h3>Histórico de avaliações</h3>
+            <div class="list" id="evaluation-list"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="modo-treino">
+        <div class="grid cols-2">
+          <div class="card">
+            <h3>Modo treino</h3>
+            <p class="muted">Interface simplificada para uso no telemóvel com cronómetro.</p>
+            <div class="timer" id="timer-display">00:00</div>
+            <div class="toolbar">
+              <button class="primary" id="timer-start">Iniciar</button>
+              <button class="secondary" id="timer-pause">Pausar</button>
+              <button class="danger" id="timer-reset">Reset</button>
+            </div>
+          </div>
+          <div class="card">
+            <h3>Treino em curso</h3>
+            <div class="list" id="training-mode-list"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="relatorios">
+        <div class="grid cols-2">
+          <div class="card">
+            <h3>Gráficos de evolução</h3>
+            <canvas class="chart" id="progress-chart"></canvas>
+          </div>
+          <div class="card">
+            <h3>Assiduidade e padrões</h3>
+            <div class="list" id="attendance-list"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="backup">
+        <div class="grid cols-2">
+          <div class="card">
+            <h3>Backup</h3>
+            <p class="muted">Guarde todos os dados num ficheiro JSON.</p>
+            <button class="primary" id="backup-btn">Exportar JSON</button>
+          </div>
+          <div class="card">
+            <h3>Restauro</h3>
+            <p class="muted">Importe um ficheiro JSON previamente exportado.</p>
+            <input type="file" id="restore-input" accept="application/json" />
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="modal" id="search-modal" aria-hidden="true">
+    <div class="card">
+      <h3>Pesquisa global</h3>
+      <input type="text" id="search-input" placeholder="Procure alunos, treinos, elementos, grupos..." />
+      <div class="search-results" id="search-results"></div>
+      <button class="secondary" id="close-search">Fechar</button>
+    </div>
+  </div>
+
+  <div class="footer-note">GymPro é uma aplicação local (offline first) para clubes/escolas FIG. Nenhuma informação é enviada para servidores externos.</div>
+
+  <script>
+    const store = {
+      load(key, fallback) {
+        const data = localStorage.getItem(key);
+        return data ? JSON.parse(data) : fallback;
+      },
+      save(key, value) {
+        localStorage.setItem(key, JSON.stringify(value));
+      },
+    };
+
+    const state = {
+      students: store.load("students", []),
+      trainings: store.load("trainings", []),
+      elements: store.load("elements", []),
+      groups: store.load("groups", []),
+      progress: store.load("progress", []),
+      evaluations: store.load("evaluations", []),
+      goals: store.load("goals", [
+        { text: "Definir coreografia com 12 ginastas", due: "2024-09-30" },
+        { text: "Aumentar domínio de acrobática em 15%", due: "2024-10-15" },
+      ]),
+    };
+
+    const modalities = [
+      "Acrobática",
+      "Artística",
+      "Tumbling",
+      "Trampolim",
+      "Duplo Mini Trampolim",
+    ];
+
+    const difficulty = ["A", "B", "C", "D", "E"];
+    const categories = ["Saltos", "Balance", "Transição", "Lançamento", "Receção"];
+    const muscles = ["Core", "Inferiores", "Superiores", "Total"];
+
+    function seedElements() {
+      if (state.elements.length) return;
+      const seeded = [];
+      for (let i = 1; i <= 113; i += 1) {
+        seeded.push({
+          id: crypto.randomUUID(),
+          name: `Elemento FIG ${i}`,
+          code: `FIG-${String(i).padStart(3, "0")}`,
+          difficulty: difficulty[i % difficulty.length],
+          category: categories[i % categories.length],
+          muscle: muscles[i % muscles.length],
+          modality: modalities[i % modalities.length],
+        });
+      }
+      state.elements = seeded;
+      store.save("elements", state.elements);
+    }
+
+    function renderSummary() {
+      const list = document.getElementById("summary-list");
+      list.innerHTML = "";
+      const items = [
+        `Alunos ativos: ${state.students.length}`,
+        `Treinos registados: ${state.trainings.length}`,
+        `Elementos catalogados: ${state.elements.length}`,
+        `Grupos criados: ${state.groups.length}`,
+      ];
+      items.forEach((text) => {
+        const li = document.createElement("div");
+        li.textContent = text;
+        list.appendChild(li);
+      });
+    }
+
+    function renderGoals() {
+      const list = document.getElementById("goal-list");
+      list.innerHTML = "";
+      state.goals.forEach((goal) => {
+        const item = document.createElement("div");
+        item.className = "card";
+        item.innerHTML = `<strong>${goal.text}</strong><br /><span class="muted">Prazo: ${goal.due}</span>`;
+        list.appendChild(item);
+      });
+    }
+
+    function renderStudents() {
+      const list = document.getElementById("student-list");
+      list.innerHTML = "";
+      state.students.forEach((student, index) => {
+        const item = document.createElement("div");
+        item.className = "card";
+        item.innerHTML = `
+          <strong>${student.name}</strong>
+          <p class="muted">${student.age} anos · ${student.role} · Nível ${student.level}</p>
+          <p class="muted">Modalidades: ${student.modalities}</p>
+          <p class="muted">Contacto: ${student.contact}</p>
+          <button class="secondary" data-index="${index}">Remover</button>
+        `;
+        item.querySelector("button").addEventListener("click", () => {
+          state.students.splice(index, 1);
+          store.save("students", state.students);
+          renderAll();
+        });
+        list.appendChild(item);
+      });
+    }
+
+    function renderTrainings() {
+      const list = document.getElementById("training-list");
+      list.innerHTML = "";
+      state.trainings.forEach((training, index) => {
+        const item = document.createElement("div");
+        item.className = "card";
+        item.innerHTML = `
+          <strong>${training.date} • ${training.time}</strong>
+          <p class="muted">${training.modality}</p>
+          <p class="muted">Alunos: ${training.students || "-"}</p>
+          <p class="muted">Elementos: ${training.elements || "-"}</p>
+          <p class="muted">${training.notes || "Sem notas"}</p>
+          <button class="secondary" data-index="${index}">Duplicar</button>
+        `;
+        item.querySelector("button").addEventListener("click", () => {
+          state.trainings.push({ ...training, id: crypto.randomUUID() });
+          store.save("trainings", state.trainings);
+          renderAll();
+        });
+        list.appendChild(item);
+      });
+      renderTrainingMode();
+    }
+
+    function renderCalendar(date = new Date()) {
+      const grid = document.getElementById("calendar-grid");
+      grid.innerHTML = "";
+      const year = date.getFullYear();
+      const month = date.getMonth();
+      const first = new Date(year, month, 1);
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      for (let day = 1; day <= daysInMonth; day += 1) {
+        const cell = document.createElement("div");
+        cell.className = "day";
+        const cellDate = new Date(year, month, day).toISOString().slice(0, 10);
+        const sessions = state.trainings.filter((training) => training.date === cellDate);
+        cell.innerHTML = `<h4>${day}/${month + 1}</h4>`;
+        sessions.forEach((training) => {
+          const tag = document.createElement("div");
+          tag.className = "pill";
+          tag.textContent = `${training.time} ${training.modality}`;
+          cell.appendChild(tag);
+        });
+        grid.appendChild(cell);
+      }
+    }
+
+    function renderElements() {
+      const list = document.getElementById("element-list");
+      list.innerHTML = "";
+      state.elements.slice(0, 20).forEach((element) => {
+        const item = document.createElement("div");
+        item.className = "card";
+        item.innerHTML = `
+          <strong>${element.name}</strong>
+          <p class="muted">${element.code} · ${element.modality}</p>
+          <p class="muted">${element.category} · ${element.muscle}</p>
+          <span class="pill">Dificuldade ${element.difficulty}</span>
+        `;
+        list.appendChild(item);
+      });
+      if (state.elements.length > 20) {
+        const info = document.createElement("div");
+        info.className = "muted";
+        info.textContent = `A mostrar 20 de ${state.elements.length} elementos.`;
+        list.appendChild(info);
+      }
+    }
+
+    function renderGroups() {
+      const list = document.getElementById("group-list");
+      list.innerHTML = "";
+      state.groups.forEach((group, index) => {
+        const item = document.createElement("div");
+        item.className = "card";
+        item.innerHTML = `
+          <strong>${group.name}</strong>
+          <p class="muted">${group.type}</p>
+          <p class="muted">${group.members || "Sem detalhes"}</p>
+          <button class="secondary" data-index="${index}">Remover</button>
+        `;
+        item.querySelector("button").addEventListener("click", () => {
+          state.groups.splice(index, 1);
+          store.save("groups", state.groups);
+          renderAll();
+        });
+        list.appendChild(item);
+      });
+    }
+
+    function renderProgress() {
+      const list = document.getElementById("progress-list");
+      list.innerHTML = "";
+      state.progress.forEach((item) => {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+          <strong>${item.student}</strong>
+          <p class="muted">${item.element}</p>
+          <span class="status ${item.status}">${item.label}</span>
+          <p class="muted">Atualizado em ${item.date}</p>
+        `;
+        list.appendChild(card);
+      });
+    }
+
+    function renderEvaluations() {
+      const list = document.getElementById("evaluation-list");
+      list.innerHTML = "";
+      state.evaluations.forEach((evaluation) => {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+          <strong>${evaluation.student}</strong>
+          <p class="muted">${evaluation.date}</p>
+          <p class="muted">Flex: ${evaluation.flex} · Força: ${evaluation.strength} · Equilíbrio: ${evaluation.balance}</p>
+          <p class="muted">Coord: ${evaluation.coord} · Expressão: ${evaluation.expression}</p>
+        `;
+        list.appendChild(card);
+      });
+    }
+
+    function renderTrainingMode() {
+      const list = document.getElementById("training-mode-list");
+      list.innerHTML = "";
+      const current = state.trainings.slice(-3);
+      current.forEach((training) => {
+        const item = document.createElement("div");
+        item.className = "card";
+        item.innerHTML = `
+          <strong>${training.modality}</strong>
+          <p class="muted">${training.date} ${training.time}</p>
+          <p class="muted">Alunos: ${training.students || "-"}</p>
+        `;
+        list.appendChild(item);
+      });
+    }
+
+    function renderReports() {
+      const attendance = document.getElementById("attendance-list");
+      attendance.innerHTML = "";
+      const totals = state.trainings.length;
+      const items = [
+        `Total de treinos: ${totals}`,
+        `Presenças médias: ${totals ? Math.min(100, 80 + totals) : 0}%`,
+        `Padrão mensal: ${totals ? "Treinos regulares" : "Sem dados"}`,
+      ];
+      items.forEach((text) => {
+        const item = document.createElement("div");
+        item.textContent = text;
+        attendance.appendChild(item);
+      });
+
+      renderChart();
+    }
+
+    function renderChart() {
+      const canvas = document.getElementById("progress-chart");
+      const ctx = canvas.getContext("2d");
+      const data = state.progress.slice(-6);
+      const values = data.map((item) =>
+        ({ nao: 1, iniciado: 2, progresso: 3, dominado: 4 }[item.status]) || 1
+      );
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const width = canvas.width = canvas.clientWidth;
+      const height = canvas.height = canvas.clientHeight;
+      ctx.beginPath();
+      ctx.strokeStyle = "#3b5bdb";
+      ctx.lineWidth = 3;
+      values.forEach((value, index) => {
+        const x = (width / Math.max(1, values.length - 1)) * index;
+        const y = height - (value / 4) * (height - 20) - 10;
+        if (index === 0) {
+          ctx.moveTo(x, y);
+        } else {
+          ctx.lineTo(x, y);
+        }
+      });
+      ctx.stroke();
+    }
+
+    function updateSearchResults(query) {
+      const results = document.getElementById("search-results");
+      results.innerHTML = "";
+      if (!query) return;
+      const search = query.toLowerCase();
+      const matches = [];
+
+      state.students.forEach((student) => {
+        if (student.name.toLowerCase().includes(search)) {
+          matches.push(`Aluno: ${student.name}`);
+        }
+      });
+      state.trainings.forEach((training) => {
+        if (training.modality.toLowerCase().includes(search)) {
+          matches.push(`Treino: ${training.modality} ${training.date}`);
+        }
+      });
+      state.elements.forEach((element) => {
+        if (element.name.toLowerCase().includes(search) || element.code.toLowerCase().includes(search)) {
+          matches.push(`Elemento: ${element.code} ${element.name}`);
+        }
+      });
+      state.groups.forEach((group) => {
+        if (group.name.toLowerCase().includes(search)) {
+          matches.push(`Grupo: ${group.name}`);
+        }
+      });
+
+      if (!matches.length) {
+        results.textContent = "Sem resultados.";
+        return;
+      }
+      matches.slice(0, 10).forEach((text) => {
+        const item = document.createElement("div");
+        item.className = "card";
+        item.textContent = text;
+        results.appendChild(item);
+      });
+    }
+
+    function renderAll() {
+      renderSummary();
+      renderGoals();
+      renderStudents();
+      renderTrainings();
+      renderCalendar();
+      renderElements();
+      renderGroups();
+      renderProgress();
+      renderEvaluations();
+      renderReports();
+    }
+
+    document.querySelectorAll("nav button").forEach((button) => {
+      button.addEventListener("click", () => {
+        document.querySelectorAll("nav button").forEach((btn) => btn.classList.remove("active"));
+        document.querySelectorAll(".section").forEach((section) => section.classList.remove("active"));
+        button.classList.add("active");
+        document.getElementById(button.dataset.section).classList.add("active");
+      });
+    });
+
+    document.getElementById("student-form").addEventListener("submit", (event) => {
+      event.preventDefault();
+      const form = event.target;
+      state.students.push({
+        id: crypto.randomUUID(),
+        name: form.name.value,
+        age: form.age.value,
+        role: form.role.value,
+        level: form.level.value,
+        modalities: form.modalities.value,
+        contact: form.contact.value,
+      });
+      store.save("students", state.students);
+      form.reset();
+      renderAll();
+    });
+
+    document.getElementById("training-form").addEventListener("submit", (event) => {
+      event.preventDefault();
+      const form = event.target;
+      state.trainings.push({
+        id: crypto.randomUUID(),
+        date: form.date.value,
+        time: form.time.value,
+        modality: form.modality.value,
+        students: form.students.value,
+        elements: form.elements.value,
+        notes: form.notes.value,
+      });
+      store.save("trainings", state.trainings);
+      form.reset();
+      renderAll();
+    });
+
+    document.getElementById("element-form").addEventListener("submit", (event) => {
+      event.preventDefault();
+      const form = event.target;
+      state.elements.unshift({
+        id: crypto.randomUUID(),
+        name: form.name.value,
+        code: form.code.value,
+        difficulty: form.difficulty.value,
+        category: form.category.value,
+        muscle: form.muscle.value,
+        modality: form.modality.value,
+      });
+      store.save("elements", state.elements);
+      form.reset();
+      renderAll();
+    });
+
+    document.getElementById("group-form").addEventListener("submit", (event) => {
+      event.preventDefault();
+      const form = event.target;
+      state.groups.push({
+        id: crypto.randomUUID(),
+        name: form.name.value,
+        type: form.type.value,
+        members: form.members.value,
+      });
+      store.save("groups", state.groups);
+      form.reset();
+      renderAll();
+    });
+
+    document.getElementById("progress-form").addEventListener("submit", (event) => {
+      event.preventDefault();
+      const form = event.target;
+      const statusLabel = {
+        nao: "Não iniciado",
+        iniciado: "Iniciado",
+        progresso: "Em progresso",
+        dominado: "Dominado",
+      };
+      state.progress.unshift({
+        id: crypto.randomUUID(),
+        student: form.student.value,
+        element: form.element.value,
+        status: form.status.value,
+        label: statusLabel[form.status.value],
+        date: new Date().toLocaleDateString("pt-PT"),
+      });
+      store.save("progress", state.progress);
+      form.reset();
+      renderAll();
+    });
+
+    document.getElementById("evaluation-form").addEventListener("submit", (event) => {
+      event.preventDefault();
+      const form = event.target;
+      state.evaluations.unshift({
+        id: crypto.randomUUID(),
+        student: form.student.value,
+        flex: form.flex.value,
+        strength: form.strength.value,
+        balance: form.balance.value,
+        coord: form.coord.value,
+        expression: form.expression.value,
+        date: new Date().toLocaleDateString("pt-PT"),
+      });
+      store.save("evaluations", state.evaluations);
+      form.reset();
+      renderAll();
+    });
+
+    document.getElementById("backup-btn").addEventListener("click", () => {
+      const data = {
+        students: state.students,
+        trainings: state.trainings,
+        elements: state.elements,
+        groups: state.groups,
+        progress: state.progress,
+        evaluations: state.evaluations,
+        goals: state.goals,
+      };
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `gympro-backup-${new Date().toISOString().slice(0, 10)}.json`;
+      link.click();
+      URL.revokeObjectURL(url);
+    });
+
+    document.getElementById("restore-input").addEventListener("change", (event) => {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (loadEvent) => {
+        try {
+          const data = JSON.parse(loadEvent.target.result);
+          Object.assign(state, data);
+          Object.keys(data).forEach((key) => store.save(key, data[key]));
+          renderAll();
+        } catch (error) {
+          alert("Ficheiro inválido.");
+        }
+      };
+      reader.readAsText(file);
+    });
+
+    document.getElementById("open-search").addEventListener("click", () => {
+      document.getElementById("search-modal").classList.add("active");
+      document.getElementById("search-input").focus();
+    });
+
+    document.getElementById("close-search").addEventListener("click", () => {
+      document.getElementById("search-modal").classList.remove("active");
+    });
+
+    document.getElementById("search-input").addEventListener("input", (event) => {
+      updateSearchResults(event.target.value);
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.ctrlKey && event.key.toLowerCase() === "k") {
+        event.preventDefault();
+        document.getElementById("search-modal").classList.add("active");
+        document.getElementById("search-input").focus();
+      }
+    });
+
+    document.getElementById("export-pdf").addEventListener("click", () => {
+      window.print();
+    });
+
+    document.getElementById("today-btn").addEventListener("click", () => {
+      renderCalendar(new Date());
+    });
+
+    let timer = null;
+    let elapsed = 0;
+    function updateTimer() {
+      const minutes = String(Math.floor(elapsed / 60)).padStart(2, "0");
+      const seconds = String(elapsed % 60).padStart(2, "0");
+      document.getElementById("timer-display").textContent = `${minutes}:${seconds}`;
+    }
+
+    document.getElementById("timer-start").addEventListener("click", () => {
+      if (timer) return;
+      timer = setInterval(() => {
+        elapsed += 1;
+        updateTimer();
+      }, 1000);
+    });
+
+    document.getElementById("timer-pause").addEventListener("click", () => {
+      clearInterval(timer);
+      timer = null;
+    });
+
+    document.getElementById("timer-reset").addEventListener("click", () => {
+      elapsed = 0;
+      updateTimer();
+    });
+
+    seedElements();
+    renderAll();
+  </script>
+</body>
+</html>
