@@ -68,6 +68,10 @@
       padding: 1.5rem clamp(1rem, 4vw, 2.5rem);
     }
 
+    .notice-wrapper {
+      padding: 1.2rem clamp(1rem, 4vw, 2.5rem) 0;
+    }
+
     nav {
       background: var(--card);
       border: 1px solid var(--border);
@@ -134,6 +138,10 @@
 
     .card h3 {
       margin-bottom: 0.6rem;
+    }
+
+    .muted {
+      color: var(--muted);
     }
 
     label {
@@ -309,6 +317,19 @@
       padding: 2rem 1rem;
     }
 
+    .alert {
+      border: 1px solid rgba(240, 62, 62, 0.3);
+      background: rgba(240, 62, 62, 0.08);
+      color: var(--danger);
+      padding: 0.8rem 1rem;
+      border-radius: 0.8rem;
+      font-size: 0.85rem;
+    }
+
+    .alert.hidden {
+      display: none;
+    }
+
     @media (max-width: 900px) {
       .layout {
         grid-template-columns: 1fr;
@@ -346,6 +367,12 @@
       <button class="primary" id="export-pdf">Exportar PDF</button>
     </div>
   </header>
+
+  <div class="notice-wrapper">
+    <div class="alert hidden" id="storage-warning">
+      Aviso: o armazenamento local não está disponível neste modo. Os dados ficarão apenas nesta sessão. Use Backup/Restauro para guardar manualmente.
+    </div>
+  </div>
 
   <div class="layout">
     <nav>
@@ -701,15 +728,56 @@
   <div class="footer-note">GymPro é uma aplicação local (offline first) para clubes/escolas FIG. Nenhuma informação é enviada para servidores externos.</div>
 
   <script>
+    const memoryStore = {};
+
+    const storageAvailable = (() => {
+      try {
+        const testKey = "__gympro__";
+        localStorage.setItem(testKey, "1");
+        localStorage.removeItem(testKey);
+        return true;
+      } catch (error) {
+        return false;
+      }
+    })();
+
     const store = {
       load(key, fallback) {
+        if (!storageAvailable) {
+          return memoryStore[key] ?? fallback;
+        }
         const data = localStorage.getItem(key);
-        return data ? JSON.parse(data) : fallback;
+        if (!data) return fallback;
+        try {
+          return JSON.parse(data);
+        } catch (error) {
+          return fallback;
+        }
       },
       save(key, value) {
+        if (!storageAvailable) {
+          memoryStore[key] = value;
+          return;
+        }
         localStorage.setItem(key, JSON.stringify(value));
       },
     };
+
+    function createId() {
+      if (window.crypto && typeof window.crypto.randomUUID === "function") {
+        return window.crypto.randomUUID();
+      }
+      if (window.crypto && typeof window.crypto.getRandomValues === "function") {
+        const bytes = new Uint8Array(16);
+        window.crypto.getRandomValues(bytes);
+        bytes[6] = (bytes[6] & 0x0f) | 0x40;
+        bytes[8] = (bytes[8] & 0x3f) | 0x80;
+        const toHex = (num) => num.toString(16).padStart(2, "0");
+        const hex = Array.from(bytes, toHex).join("");
+        return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
+      }
+      return `id-${Math.random().toString(16).slice(2)}${Date.now().toString(16)}`;
+    }
 
     const state = {
       students: store.load("students", []),
@@ -723,6 +791,11 @@
         { text: "Aumentar domínio de acrobática em 15%", due: "2024-10-15" },
       ]),
     };
+
+    const storageWarning = document.getElementById("storage-warning");
+    if (!storageAvailable) {
+      storageWarning.classList.remove("hidden");
+    }
 
     const modalities = [
       "Acrobática",
@@ -741,7 +814,7 @@
       const seeded = [];
       for (let i = 1; i <= 113; i += 1) {
         seeded.push({
-          id: crypto.randomUUID(),
+          id: createId(),
           name: `Elemento FIG ${i}`,
           code: `FIG-${String(i).padStart(3, "0")}`,
           difficulty: difficulty[i % difficulty.length],
@@ -818,7 +891,7 @@
           <button class="secondary" data-index="${index}">Duplicar</button>
         `;
         item.querySelector("button").addEventListener("click", () => {
-          state.trainings.push({ ...training, id: crypto.randomUUID() });
+          state.trainings.push({ ...training, id: createId() });
           store.save("trainings", state.trainings);
           renderAll();
         });
@@ -1050,7 +1123,7 @@
       event.preventDefault();
       const form = event.target;
       state.students.push({
-        id: crypto.randomUUID(),
+        id: createId(),
         name: form.name.value,
         age: form.age.value,
         role: form.role.value,
@@ -1067,7 +1140,7 @@
       event.preventDefault();
       const form = event.target;
       state.trainings.push({
-        id: crypto.randomUUID(),
+        id: createId(),
         date: form.date.value,
         time: form.time.value,
         modality: form.modality.value,
@@ -1084,7 +1157,7 @@
       event.preventDefault();
       const form = event.target;
       state.elements.unshift({
-        id: crypto.randomUUID(),
+        id: createId(),
         name: form.name.value,
         code: form.code.value,
         difficulty: form.difficulty.value,
@@ -1101,7 +1174,7 @@
       event.preventDefault();
       const form = event.target;
       state.groups.push({
-        id: crypto.randomUUID(),
+        id: createId(),
         name: form.name.value,
         type: form.type.value,
         members: form.members.value,
@@ -1121,7 +1194,7 @@
         dominado: "Dominado",
       };
       state.progress.unshift({
-        id: crypto.randomUUID(),
+        id: createId(),
         student: form.student.value,
         element: form.element.value,
         status: form.status.value,
@@ -1137,7 +1210,7 @@
       event.preventDefault();
       const form = event.target;
       state.evaluations.unshift({
-        id: crypto.randomUUID(),
+        id: createId(),
         student: form.student.value,
         flex: form.flex.value,
         strength: form.strength.value,
