@@ -27,20 +27,22 @@
     }
 
     body {
-      background: var(--bg);
+      background: linear-gradient(180deg, #f6f7fb 0%, #eef1fb 45%, #f6f7fb 100%);
       color: var(--text);
       min-height: 100vh;
     }
 
     header {
-      background: var(--card);
+      background: radial-gradient(circle at top left, rgba(59, 91, 219, 0.16), transparent 45%),
+        var(--card);
       border-bottom: 1px solid var(--border);
-      padding: 1.5rem clamp(1rem, 4vw, 2.5rem);
+      padding: 2rem clamp(1rem, 4vw, 3rem);
       display: flex;
       flex-wrap: wrap;
-      gap: 1rem;
+      gap: 1.5rem;
       align-items: center;
       justify-content: space-between;
+      box-shadow: 0 20px 40px rgba(15, 23, 42, 0.06);
     }
 
     header h1 {
@@ -49,23 +51,27 @@
 
     header p {
       color: var(--muted);
-      max-width: 45ch;
+      max-width: 50ch;
+      line-height: 1.5;
     }
 
     .badge {
-      background: rgba(59, 91, 219, 0.12);
+      background: rgba(59, 91, 219, 0.14);
       color: var(--brand);
-      padding: 0.3rem 0.7rem;
+      padding: 0.35rem 0.8rem;
       border-radius: 999px;
       font-size: 0.8rem;
       font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
     }
 
     .layout {
       display: grid;
-      grid-template-columns: 220px 1fr;
-      gap: 1.5rem;
-      padding: 1.5rem clamp(1rem, 4vw, 2.5rem);
+      grid-template-columns: 240px 1fr;
+      gap: 1.8rem;
+      padding: 1.5rem clamp(1rem, 4vw, 2.5rem) 3rem;
     }
 
     .notice-wrapper {
@@ -75,38 +81,41 @@
     nav {
       background: var(--card);
       border: 1px solid var(--border);
-      border-radius: 1rem;
+      border-radius: 1.2rem;
       padding: 1rem;
       height: fit-content;
       position: sticky;
       top: 1.5rem;
+      box-shadow: 0 14px 30px rgba(15, 23, 42, 0.06);
     }
 
     nav button {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.6rem;
       width: 100%;
       background: transparent;
       border: none;
-      padding: 0.7rem 0.8rem;
-      border-radius: 0.8rem;
+      padding: 0.75rem 0.85rem;
+      border-radius: 0.85rem;
       font-weight: 600;
       color: var(--text);
       cursor: pointer;
       text-align: left;
+      transition: all 0.2s ease;
     }
 
     nav button.active,
     nav button:hover {
-      background: rgba(59, 91, 219, 0.12);
+      background: rgba(59, 91, 219, 0.14);
       color: var(--brand);
+      transform: translateX(2px);
     }
 
     main {
       display: flex;
       flex-direction: column;
-      gap: 1.5rem;
+      gap: 1.8rem;
     }
 
     .section {
@@ -131,13 +140,20 @@
     .card {
       background: var(--card);
       border: 1px solid var(--border);
-      border-radius: 1rem;
-      padding: 1rem;
-      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.05);
+      border-radius: 1.2rem;
+      padding: 1.2rem;
+      box-shadow: 0 16px 36px rgba(15, 23, 42, 0.08);
     }
 
     .card h3 {
       margin-bottom: 0.6rem;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
     }
 
     .muted {
@@ -162,10 +178,19 @@
     select,
     textarea {
       width: 100%;
-      padding: 0.55rem 0.7rem;
-      border-radius: 0.6rem;
+      padding: 0.6rem 0.75rem;
+      border-radius: 0.7rem;
       border: 1px solid var(--border);
       background: #fff;
+      transition: border 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: rgba(59, 91, 219, 0.6);
+      box-shadow: 0 0 0 3px rgba(59, 91, 219, 0.12);
     }
 
     textarea {
@@ -178,9 +203,15 @@
       color: #fff;
       border: none;
       padding: 0.65rem 1rem;
-      border-radius: 0.6rem;
+      border-radius: 0.7rem;
       font-weight: 600;
       cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    button.primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 20px rgba(59, 91, 219, 0.3);
     }
 
     button.secondary {
@@ -188,8 +219,14 @@
       background: transparent;
       color: var(--text);
       padding: 0.6rem 0.9rem;
-      border-radius: 0.6rem;
+      border-radius: 0.7rem;
       cursor: pointer;
+      transition: background 0.2s ease, border 0.2s ease;
+    }
+
+    button.secondary:hover {
+      background: rgba(59, 91, 219, 0.08);
+      border-color: rgba(59, 91, 219, 0.3);
     }
 
     button.danger {
@@ -197,7 +234,21 @@
       color: #fff;
       border: none;
       padding: 0.6rem 0.9rem;
-      border-radius: 0.6rem;
+      border-radius: 0.7rem;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    button.danger:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 20px rgba(240, 62, 62, 0.3);
+    }
+
+    button.ghost {
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      padding: 0.4rem 0.6rem;
       cursor: pointer;
     }
 
@@ -205,6 +256,21 @@
       display: flex;
       flex-direction: column;
       gap: 0.8rem;
+    }
+
+    .list.inline {
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
+
+    .split {
+      display: flex;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+    }
+
+    .split > * {
+      flex: 1 1 180px;
     }
 
     .pill {
@@ -251,6 +317,13 @@
       justify-content: space-between;
     }
 
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      align-items: center;
+    }
+
     .calendar {
       display: grid;
       grid-template-columns: repeat(7, minmax(120px, 1fr));
@@ -293,7 +366,11 @@
     }
 
     .modal .card {
-      width: min(720px, 100%);
+      width: min(760px, 100%);
+    }
+
+    .modal small {
+      color: var(--muted);
     }
 
     .search-results {
@@ -419,6 +496,7 @@
           <div class="card">
             <h3>Novo aluno</h3>
             <form id="student-form" class="list">
+              <input type="hidden" name="studentId" />
               <div>
                 <label>Nome completo</label>
                 <input type="text" name="name" required />
@@ -447,7 +525,10 @@
                 <label>Contacto</label>
                 <input type="text" name="contact" placeholder="email / telefone" required />
               </div>
-              <button class="primary" type="submit">Adicionar aluno</button>
+              <div class="button-row">
+                <button class="primary" type="submit" id="student-submit">Adicionar aluno</button>
+                <button class="secondary" type="button" id="student-cancel" hidden>Cancelar edição</button>
+              </div>
             </form>
           </div>
           <div class="card">
@@ -524,6 +605,14 @@
               <div>
                 <label>Código FIG</label>
                 <input type="text" name="code" required />
+              </div>
+              <div>
+                <label>Descrição técnica</label>
+                <textarea name="description" placeholder="Explique o movimento e os requisitos técnicos" required></textarea>
+              </div>
+              <div>
+                <label>Componentes</label>
+                <textarea name="components" placeholder="Sequência, transições, apoios, aterragem" required></textarea>
               </div>
               <div>
                 <label>Dificuldade</label>
@@ -725,6 +814,39 @@
     </div>
   </div>
 
+  <div class="modal" id="export-modal" aria-hidden="true">
+    <div class="card">
+      <div class="section-header">
+        <h3>Exportação PDF personalizada</h3>
+        <button class="ghost" id="close-export">Fechar</button>
+      </div>
+      <p class="muted">Escolha o tipo de relatório e os dados a incluir. A exportação abre numa nova janela pronta para imprimir em PDF.</p>
+      <div class="list">
+        <div>
+          <label>Tipo de exportação</label>
+          <select id="export-type">
+            <option value="global">Relatório global de progresso</option>
+            <option value="student">Ficha de aluno</option>
+            <option value="training">Relatório de treino</option>
+          </select>
+        </div>
+        <div id="export-student-wrapper">
+          <label>Selecionar aluno</label>
+          <select id="export-student"></select>
+        </div>
+        <div id="export-training-wrapper">
+          <label>Selecionar treino</label>
+          <select id="export-training"></select>
+        </div>
+        <div class="button-row">
+          <button class="primary" id="export-confirm">Gerar PDF</button>
+          <button class="secondary" id="export-cancel">Cancelar</button>
+        </div>
+        <small>Dica: depois de gerar, use “Guardar como PDF” no diálogo de impressão.</small>
+      </div>
+    </div>
+  </div>
+
   <div class="footer-note">GymPro é uma aplicação local (offline first) para clubes/escolas FIG. Nenhuma informação é enviada para servidores externos.</div>
 
   <script>
@@ -817,6 +939,8 @@
           id: createId(),
           name: `Elemento FIG ${i}`,
           code: `FIG-${String(i).padStart(3, "0")}`,
+          description: "Descrição técnica do elemento conforme código FIG.",
+          components: "Componentes principais: entrada, fase aérea, receção.",
           difficulty: difficulty[i % difficulty.length],
           category: categories[i % categories.length],
           muscle: muscles[i % muscles.length],
@@ -854,6 +978,27 @@
       });
     }
 
+    function populateStudentForm(student, index) {
+      const form = document.getElementById("student-form");
+      form.studentId.value = index;
+      form.name.value = student.name;
+      form.age.value = student.age;
+      form.role.value = student.role;
+      form.level.value = student.level;
+      form.modalities.value = student.modalities;
+      form.contact.value = student.contact;
+      document.getElementById("student-submit").textContent = "Atualizar aluno";
+      document.getElementById("student-cancel").hidden = false;
+    }
+
+    function resetStudentForm() {
+      const form = document.getElementById("student-form");
+      form.reset();
+      form.studentId.value = "";
+      document.getElementById("student-submit").textContent = "Adicionar aluno";
+      document.getElementById("student-cancel").hidden = true;
+    }
+
     function renderStudents() {
       const list = document.getElementById("student-list");
       list.innerHTML = "";
@@ -865,9 +1010,15 @@
           <p class="muted">${student.age} anos · ${student.role} · Nível ${student.level}</p>
           <p class="muted">Modalidades: ${student.modalities}</p>
           <p class="muted">Contacto: ${student.contact}</p>
-          <button class="secondary" data-index="${index}">Remover</button>
+          <div class="button-row">
+            <button class="secondary" data-action="edit" data-index="${index}">Editar</button>
+            <button class="secondary" data-action="remove" data-index="${index}">Remover</button>
+          </div>
         `;
-        item.querySelector("button").addEventListener("click", () => {
+        item.querySelector("[data-action='edit']").addEventListener("click", () => {
+          populateStudentForm(student, index);
+        });
+        item.querySelector("[data-action='remove']").addEventListener("click", () => {
           state.students.splice(index, 1);
           store.save("students", state.students);
           renderAll();
@@ -933,6 +1084,8 @@
           <strong>${element.name}</strong>
           <p class="muted">${element.code} · ${element.modality}</p>
           <p class="muted">${element.category} · ${element.muscle}</p>
+          <p class="muted">${element.description || "Sem descrição técnica."}</p>
+          <p class="muted">Componentes: ${element.components || "Sem componentes definidos."}</p>
           <span class="pill">Dificuldade ${element.difficulty}</span>
         `;
         list.appendChild(item);
@@ -1097,6 +1250,146 @@
       });
     }
 
+    function buildExportSelectOptions() {
+      const studentSelect = document.getElementById("export-student");
+      const trainingSelect = document.getElementById("export-training");
+      studentSelect.innerHTML = "";
+      trainingSelect.innerHTML = "";
+
+      if (!state.students.length) {
+        const option = document.createElement("option");
+        option.value = "";
+        option.textContent = "Sem alunos registados";
+        studentSelect.appendChild(option);
+      }
+      state.students.forEach((student, index) => {
+        const option = document.createElement("option");
+        option.value = index;
+        option.textContent = student.name;
+        studentSelect.appendChild(option);
+      });
+
+      if (!state.trainings.length) {
+        const option = document.createElement("option");
+        option.value = "";
+        option.textContent = "Sem treinos registados";
+        trainingSelect.appendChild(option);
+      }
+      state.trainings.forEach((training, index) => {
+        const option = document.createElement("option");
+        option.value = index;
+        option.textContent = `${training.date} • ${training.time} — ${training.modality}`;
+        trainingSelect.appendChild(option);
+      });
+    }
+
+    function updateExportVisibility() {
+      const type = document.getElementById("export-type").value;
+      const studentWrapper = document.getElementById("export-student-wrapper");
+      const trainingWrapper = document.getElementById("export-training-wrapper");
+      studentWrapper.style.display = type === "student" ? "block" : "none";
+      trainingWrapper.style.display = type === "training" ? "block" : "none";
+    }
+
+    function formatList(items) {
+      if (!items || !items.length) {
+        return "<p>Sem dados registados.</p>";
+      }
+      return `<ul>${items.map((item) => `<li>${item}</li>`).join("")}</ul>`;
+    }
+
+    function generateExportHtml(type) {
+      const baseStyles = `
+        <style>
+          body { font-family: "Inter", system-ui, sans-serif; color: #1e1f26; padding: 2rem; }
+          h1, h2 { color: #3b5bdb; }
+          .meta { color: #586174; margin-bottom: 1rem; }
+          .card { border: 1px solid #e1e5ee; border-radius: 12px; padding: 1rem; margin-bottom: 1rem; }
+          ul { padding-left: 1.1rem; }
+        </style>
+      `;
+
+      if (type === "student") {
+        if (!state.students.length) {
+          return `${baseStyles}<h1>Ficha de aluno</h1><p>Não existem alunos registados.</p>`;
+        }
+        const studentIndex = Number(document.getElementById("export-student").value);
+        const student = state.students[studentIndex];
+        if (!student) {
+          return `${baseStyles}<h1>Ficha de aluno</h1><p>Aluno não encontrado.</p>`;
+        }
+        const progress = state.progress
+          .filter((item) => item.student === student.name)
+          .map((item) => `${item.element} — ${item.label} (${item.date})`);
+        const evaluations = state.evaluations
+          .filter((item) => item.student === student.name)
+          .map((item) => `${item.date} · Flex ${item.flex} · Força ${item.strength} · Equilíbrio ${item.balance}`);
+        return `
+          ${baseStyles}
+          <h1>Ficha de aluno</h1>
+          <div class="meta">Gerado em ${new Date().toLocaleDateString("pt-PT")}</div>
+          <div class="card">
+            <h2>${student.name}</h2>
+            <p>${student.age} anos · ${student.role} · Nível ${student.level}</p>
+            <p>Modalidades: ${student.modalities}</p>
+            <p>Contacto: ${student.contact}</p>
+          </div>
+          <div class="card">
+            <h2>Progresso técnico</h2>
+            ${formatList(progress)}
+          </div>
+          <div class="card">
+            <h2>Avaliações físicas</h2>
+            ${formatList(evaluations)}
+          </div>
+        `;
+      }
+
+      if (type === "training") {
+        if (!state.trainings.length) {
+          return `${baseStyles}<h1>Relatório de treino</h1><p>Não existem treinos registados.</p>`;
+        }
+        const trainingIndex = Number(document.getElementById("export-training").value);
+        const training = state.trainings[trainingIndex];
+        if (!training) {
+          return `${baseStyles}<h1>Relatório de treino</h1><p>Treino não encontrado.</p>`;
+        }
+        return `
+          ${baseStyles}
+          <h1>Relatório de treino</h1>
+          <div class="meta">Gerado em ${new Date().toLocaleDateString("pt-PT")}</div>
+          <div class="card">
+            <h2>${training.modality}</h2>
+            <p>${training.date} • ${training.time}</p>
+            <p>Alunos: ${training.students || "-"}</p>
+            <p>Elementos: ${training.elements || "-"}</p>
+            <p>Notas: ${training.notes || "Sem notas"}</p>
+          </div>
+        `;
+      }
+
+      const goals = state.goals.map((goal) => `${goal.text} (Prazo: ${goal.due})`);
+      const totals = [
+        `Alunos ativos: ${state.students.length}`,
+        `Treinos registados: ${state.trainings.length}`,
+        `Elementos catalogados: ${state.elements.length}`,
+        `Grupos criados: ${state.groups.length}`,
+      ];
+      return `
+        ${baseStyles}
+        <h1>Relatório global de progresso</h1>
+        <div class="meta">Gerado em ${new Date().toLocaleDateString("pt-PT")}</div>
+        <div class="card">
+          <h2>Resumo</h2>
+          ${formatList(totals)}
+        </div>
+        <div class="card">
+          <h2>Objetivos</h2>
+          ${formatList(goals)}
+        </div>
+      `;
+    }
+
     function renderAll() {
       renderSummary();
       renderGoals();
@@ -1108,6 +1401,8 @@
       renderProgress();
       renderEvaluations();
       renderReports();
+      buildExportSelectOptions();
+      updateExportVisibility();
     }
 
     document.querySelectorAll("nav button").forEach((button) => {
@@ -1122,7 +1417,7 @@
     document.getElementById("student-form").addEventListener("submit", (event) => {
       event.preventDefault();
       const form = event.target;
-      state.students.push({
+      const payload = {
         id: createId(),
         name: form.name.value,
         age: form.age.value,
@@ -1130,10 +1425,20 @@
         level: form.level.value,
         modalities: form.modalities.value,
         contact: form.contact.value,
-      });
+      };
+      if (form.studentId.value !== "") {
+        const index = Number(form.studentId.value);
+        state.students[index] = { ...state.students[index], ...payload };
+      } else {
+        state.students.push(payload);
+      }
       store.save("students", state.students);
-      form.reset();
+      resetStudentForm();
       renderAll();
+    });
+
+    document.getElementById("student-cancel").addEventListener("click", () => {
+      resetStudentForm();
     });
 
     document.getElementById("training-form").addEventListener("submit", (event) => {
@@ -1160,6 +1465,8 @@
         id: createId(),
         name: form.name.value,
         code: form.code.value,
+        description: form.description.value,
+        components: form.components.value,
         difficulty: form.difficulty.value,
         category: form.category.value,
         muscle: form.muscle.value,
@@ -1273,16 +1580,40 @@
       updateSearchResults(event.target.value);
     });
 
+    document.getElementById("export-pdf").addEventListener("click", () => {
+      buildExportSelectOptions();
+      updateExportVisibility();
+      document.getElementById("export-modal").classList.add("active");
+    });
+
+    document.getElementById("close-export").addEventListener("click", () => {
+      document.getElementById("export-modal").classList.remove("active");
+    });
+
+    document.getElementById("export-cancel").addEventListener("click", () => {
+      document.getElementById("export-modal").classList.remove("active");
+    });
+
+    document.getElementById("export-type").addEventListener("change", updateExportVisibility);
+
+    document.getElementById("export-confirm").addEventListener("click", () => {
+      const type = document.getElementById("export-type").value;
+      const html = generateExportHtml(type);
+      const exportWindow = window.open("", "_blank");
+      if (!exportWindow) return;
+      exportWindow.document.write(`<html><head><title>GymPro PDF</title></head><body>${html}</body></html>`);
+      exportWindow.document.close();
+      exportWindow.focus();
+      exportWindow.print();
+      document.getElementById("export-modal").classList.remove("active");
+    });
+
     document.addEventListener("keydown", (event) => {
       if (event.ctrlKey && event.key.toLowerCase() === "k") {
         event.preventDefault();
         document.getElementById("search-modal").classList.add("active");
         document.getElementById("search-input").focus();
       }
-    });
-
-    document.getElementById("export-pdf").addEventListener("click", () => {
-      window.print();
     });
 
     document.getElementById("today-btn").addEventListener("click", () => {
