@@ -5,18 +5,222 @@
     <meta name="viewport" content="width=1920, height=1080" />
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
     <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-      html,
-      body {
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body {
         margin: 0;
         width: 1920px;
         height: 1080px;
         overflow: hidden;
-        background: #000;
+        background: #07070f;
+        font-family: 'Segoe UI', system-ui, sans-serif;
+      }
+
+      #root {
+        position: relative;
+        width: 1920px;
+        height: 1080px;
+      }
+
+      /* ── Backgrounds (always visible, no class="clip") ── */
+      .bg-gradient {
+        position: absolute;
+        inset: 0;
+        background:
+          radial-gradient(ellipse 900px 700px at 25% 55%, #1a0650 0%, transparent 70%),
+          radial-gradient(ellipse 800px 600px at 75% 45%, #030d2e 0%, transparent 70%),
+          #07070f;
+      }
+
+      .bg-grid {
+        position: absolute;
+        inset: 0;
+        background-image:
+          linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+        background-size: 64px 64px;
+      }
+
+      /* ── All timed clips hidden by default ── */
+      .clip { visibility: hidden; }
+
+      /* ══════════════════════════════════════
+         SCENE 1 — INTRO (0 – 8 s)
+         ══════════════════════════════════════ */
+      #intro-eyebrow {
+        position: absolute;
+        top: 338px;
+        left: 50%;
+        /* centering handled by GSAP xPercent: -50 */
+        white-space: nowrap;
+        font-size: 20px;
+        font-weight: 700;
+        letter-spacing: 6px;
+        text-transform: uppercase;
+        color: #a78bfa;
+        padding: 8px 28px;
+        border: 1px solid rgba(167, 139, 250, 0.35);
+        border-radius: 100px;
+        background: rgba(167, 139, 250, 0.08);
+      }
+
+      #intro-title {
+        position: absolute;
+        top: 400px;
+        left: 50%;
+        /* centering handled by GSAP xPercent: -50 */
+        white-space: nowrap;
+        font-size: 148px;
+        font-weight: 900;
+        background: linear-gradient(135deg, #ffffff 0%, #c4b5fd 55%, #818cf8 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        line-height: 1;
+      }
+
+      #intro-subtitle {
+        position: absolute;
+        top: 600px;
+        left: 50%;
+        /* centering handled by GSAP xPercent: -50 */
+        white-space: nowrap;
+        font-size: 40px;
+        color: rgba(255, 255, 255, 0.5);
+        letter-spacing: 1px;
+      }
+
+      #intro-rule {
+        position: absolute;
+        top: 692px;
+        left: 50%;
+        /* centering handled by GSAP xPercent: -50 */
+        width: 0;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, #a78bfa 50%, transparent);
+        border-radius: 2px;
+      }
+
+      /* ══════════════════════════════════════
+         SCENE 2 — FEATURES (7 – 18 s)
+         ══════════════════════════════════════ */
+      .feature-card {
+        position: absolute;
+        width: 760px;
+        top: 220px;
+        padding: 64px;
+        border-radius: 28px;
+        background: rgba(255, 255, 255, 0.035);
+        border: 1px solid rgba(255, 255, 255, 0.09);
+      }
+
+      #card-write  { left: 100px;  border-color: rgba(139, 92, 246, 0.4); }
+      #card-render { right: 100px; border-color: rgba(56, 189, 248, 0.4); }
+
+      .card-step {
+        font-size: 16px;
+        font-weight: 700;
+        letter-spacing: 4px;
+        text-transform: uppercase;
+        margin-bottom: 20px;
+      }
+      #card-write  .card-step { color: #a78bfa; }
+      #card-render .card-step { color: #38bdf8; }
+
+      .card-heading {
+        font-size: 68px;
+        font-weight: 800;
+        color: #fff;
+        margin-bottom: 20px;
+        line-height: 1.05;
+      }
+
+      .card-body {
+        font-size: 27px;
+        color: rgba(255, 255, 255, 0.45);
+        line-height: 1.6;
+        margin-bottom: 36px;
+      }
+
+      .code-box {
+        background: rgba(0, 0, 0, 0.45);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 14px;
+        padding: 26px 30px;
+        font-family: 'Courier New', monospace;
+        font-size: 21px;
+        line-height: 1.7;
+        color: #e2e8f0;
+      }
+      .t-attr { color: #60a5fa; }
+      .t-val  { color: #86efac; }
+      .t-tag  { color: #f472b6; }
+      .t-ok   { color: #86efac; }
+      .t-path { color: #60a5fa; }
+
+      #arrow-icon {
+        position: absolute;
+        top: 490px;
+        left: 50%;
+        /* centering handled by GSAP xPercent: -50 */
+        font-size: 72px;
+        color: rgba(255, 255, 255, 0.18);
+        white-space: nowrap;
+        line-height: 1;
+      }
+
+      /* ══════════════════════════════════════
+         SCENE 3 — OUTRO (17 – 25 s)
+         ══════════════════════════════════════ */
+      #outro-label {
+        position: absolute;
+        top: 350px;
+        left: 50%;
+        /* centering handled by GSAP xPercent: -50 */
+        white-space: nowrap;
+        font-size: 20px;
+        font-weight: 700;
+        letter-spacing: 6px;
+        text-transform: uppercase;
+        color: #a78bfa;
+      }
+
+      #outro-heading {
+        position: absolute;
+        top: 400px;
+        left: 50%;
+        /* centering handled by GSAP xPercent: -50 */
+        white-space: nowrap;
+        font-size: 110px;
+        font-weight: 900;
+        color: #fff;
+        line-height: 1;
+        text-align: center;
+      }
+
+      #outro-tagline {
+        position: absolute;
+        top: 560px;
+        left: 50%;
+        /* centering handled by GSAP xPercent: -50 */
+        white-space: nowrap;
+        font-size: 34px;
+        color: rgba(255, 255, 255, 0.38);
+        letter-spacing: 3px;
+      }
+
+      #outro-url {
+        position: absolute;
+        top: 650px;
+        left: 50%;
+        /* centering handled by GSAP xPercent: -50 */
+        white-space: nowrap;
+        font-size: 26px;
+        color: #a78bfa;
+        letter-spacing: 2px;
+        padding: 10px 30px;
+        border: 1px solid rgba(167, 139, 250, 0.3);
+        border-radius: 100px;
+        background: rgba(167, 139, 250, 0.07);
       }
     </style>
   </head>
@@ -25,26 +229,204 @@
       id="root"
       data-composition-id="main"
       data-start="0"
-      data-duration="10"
+      data-duration="25"
       data-width="1920"
       data-height="1080"
     >
-      
-      
+      <!-- Static backgrounds (no class="clip" — always visible) -->
+      <div class="bg-gradient"></div>
+      <div class="bg-grid"></div>
 
-      <!--
-        Add your clips here. Example:
-        <div id="title" class="clip" data-start="0" data-duration="5" data-track-index="1"
-             style="font-size: 64px; color: #fff; padding: 40px">
-          Hello World
+      <!-- ══ SCENE 1: INTRO (0–8 s) ══ -->
+      <div id="intro-eyebrow"
+           class="clip"
+           data-start="0"
+           data-duration="8"
+           data-track-index="1">
+        ✦ Open Source · Apache 2.0
+      </div>
+
+      <div id="intro-title"
+           class="clip"
+           data-start="0"
+           data-duration="8"
+           data-track-index="2">
+        HyperFrames
+      </div>
+
+      <div id="intro-subtitle"
+           class="clip"
+           data-start="0"
+           data-duration="8"
+           data-track-index="3">
+        Write HTML.&nbsp;&nbsp;Render video.&nbsp;&nbsp;No fees.
+      </div>
+
+      <div id="intro-rule"
+           class="clip"
+           data-start="0"
+           data-duration="8"
+           data-track-index="4">
+      </div>
+
+      <!-- ══ SCENE 2: FEATURES (7–18 s) ══ -->
+      <div id="card-write"
+           class="feature-card clip"
+           data-start="7"
+           data-duration="11"
+           data-track-index="5">
+        <div class="card-step">Step 01</div>
+        <div class="card-heading">Write HTML</div>
+        <div class="card-body">
+          Compose your video using HTML &amp; CSS you already know.
+          Add timing with simple data attributes.
         </div>
-      -->
+        <div class="code-box">
+&lt;<span class="t-tag">div</span>
+  <span class="t-attr">class</span>=<span class="t-val">"clip"</span>
+  <span class="t-attr">data-start</span>=<span class="t-val">"0"</span>
+  <span class="t-attr">data-duration</span>=<span class="t-val">"5"</span>
+  <span class="t-attr">data-track-index</span>=<span class="t-val">"1"</span>&gt;
+  Hello, World
+&lt;/<span class="t-tag">div</span>&gt;
+        </div>
+      </div>
+
+      <div id="arrow-icon"
+           class="clip"
+           data-start="7"
+           data-duration="11"
+           data-track-index="6">
+        →
+      </div>
+
+      <div id="card-render"
+           class="feature-card clip"
+           data-start="7"
+           data-duration="11"
+           data-track-index="7">
+        <div class="card-step">Step 02</div>
+        <div class="card-heading">Get Video</div>
+        <div class="card-body">
+          One command renders a deterministic, frame‑accurate MP4.
+          GSAP, Lottie, Three.js — all supported.
+        </div>
+        <div class="code-box">
+$ npm run render<br><br>
+<span class="t-ok">✓ Rendered in 3.2 s</span><br>
+<span class="t-path">→ output/main.mp4</span>
+        </div>
+      </div>
+
+      <!-- ══ SCENE 3: OUTRO (17–25 s) ══ -->
+      <div id="outro-label"
+           class="clip"
+           data-start="17"
+           data-duration="8"
+           data-track-index="8">
+        ✦ Built for AI Agents
+      </div>
+
+      <div id="outro-heading"
+           class="clip"
+           data-start="17"
+           data-duration="8"
+           data-track-index="9">
+        Deterministic.<br>Open Source.
+      </div>
+
+      <div id="outro-tagline"
+           class="clip"
+           data-start="17"
+           data-duration="8"
+           data-track-index="10">
+        GSAP · Lottie · Three.js · CSS · WAAPI
+      </div>
+
+      <div id="outro-url"
+           class="clip"
+           data-start="17"
+           data-duration="8"
+           data-track-index="11">
+        github.com/heygen-com/hyperframes
+      </div>
+
     </div>
 
     <script>
       window.__timelines = window.__timelines || {};
       const tl = gsap.timeline({ paused: true });
-      // Example: tl.from("#title", { opacity: 0, y: -50, duration: 1 }, 0);
+
+      // ── SCENE 1 ENTER ──
+      // Use fromTo (xPercent: -50 in both from/to) to preserve centering alongside y animation
+      tl.fromTo("#intro-eyebrow",
+        { xPercent: -50, opacity: 0, y: -16 },
+        { xPercent: -50, opacity: 1, y: 0, duration: 0.5 },
+        0.3);
+
+      tl.fromTo("#intro-title",
+        { xPercent: -50, opacity: 0, y: 48 },
+        { xPercent: -50, opacity: 1, y: 0, duration: 0.8, ease: "power3.out" },
+        0.55);
+
+      tl.fromTo("#intro-subtitle",
+        { xPercent: -50, opacity: 0, y: 20 },
+        { xPercent: -50, opacity: 1, y: 0, duration: 0.6 },
+        1.0);
+
+      tl.set("#intro-rule", { xPercent: -50 }, 0);
+      tl.to("#intro-rule", { width: 440, duration: 0.9, ease: "power2.out" }, 1.2);
+
+      // ── SCENE 1 EXIT ──
+      tl.to("#intro-eyebrow",
+            { xPercent: -50, opacity: 0, y: -16, duration: 0.45 }, 6.8);
+      tl.to("#intro-subtitle",
+            { xPercent: -50, opacity: 0, y: -16, duration: 0.45 }, 6.86);
+      tl.to("#intro-rule",
+            { xPercent: -50, opacity: 0, duration: 0.45 }, 6.92);
+      tl.to("#intro-title",
+            { xPercent: -50, opacity: 0, y: -24, duration: 0.5 }, 7.0);
+
+      // ── SCENE 2 ENTER ──
+      tl.from("#card-write",  { opacity: 0, x: -72, duration: 0.7, ease: "power2.out" }, 7.4);
+      tl.fromTo("#arrow-icon",
+        { xPercent: -50, opacity: 0, scale: 0.4 },
+        { xPercent: -50, opacity: 1, scale: 1, duration: 0.35 },
+        7.9);
+      tl.from("#card-render", { opacity: 0, x: 72, duration: 0.7, ease: "power2.out" }, 8.1);
+
+      // ── SCENE 2 EXIT ──
+      tl.to("#card-write",  { opacity: 0, y: -28, duration: 0.45 }, 17.1);
+      tl.to("#arrow-icon",  { xPercent: -50, opacity: 0, y: -28, duration: 0.45 }, 17.17);
+      tl.to("#card-render", { opacity: 0, y: -28, duration: 0.45 }, 17.24);
+
+      // ── SCENE 3 ENTER ──
+      tl.fromTo("#outro-label",
+        { xPercent: -50, opacity: 0, y: -16 },
+        { xPercent: -50, opacity: 1, y: 0, duration: 0.4 },
+        17.7);
+
+      tl.fromTo("#outro-heading",
+        { xPercent: -50, opacity: 0, scale: 0.88 },
+        { xPercent: -50, opacity: 1, scale: 1, duration: 0.75, ease: "power3.out" },
+        17.9);
+
+      tl.fromTo("#outro-tagline",
+        { xPercent: -50, opacity: 0, y: 20 },
+        { xPercent: -50, opacity: 1, y: 0, duration: 0.55 },
+        18.4);
+
+      tl.fromTo("#outro-url",
+        { xPercent: -50, opacity: 0, y: 20 },
+        { xPercent: -50, opacity: 1, y: 0, duration: 0.5 },
+        18.75);
+
+      // ── SCENE 3 EXIT ──
+      tl.to("#outro-label",   { xPercent: -50, opacity: 0, duration: 0.5 }, 24.1);
+      tl.to("#outro-heading", { xPercent: -50, opacity: 0, duration: 0.5 }, 24.16);
+      tl.to("#outro-tagline", { xPercent: -50, opacity: 0, duration: 0.5 }, 24.22);
+      tl.to("#outro-url",     { xPercent: -50, opacity: 0, duration: 0.5 }, 24.28);
+
       window.__timelines["main"] = tl;
     </script>
   </body>
